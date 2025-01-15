@@ -2,6 +2,14 @@ const express = require("express");
 
 const app = express();
 
+app.get("/hello/:userId/:officeId", (req, res) => {
+  console.log(req.query);
+
+  console.log(req.params);
+
+  res.send({ message: "Hello from hello URL 123" });
+});
+
 app.use("/user", (req, res) => {
   res.send({ message: "Universal user message" });
 });
