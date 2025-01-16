@@ -1,20 +1,16 @@
 const express = require("express");
+const { adminAuth } = require("../middleware/auth");
 
 const app = express();
 
-app.use("/user", (req, res, next) => {
-  console.log("Route handler 2");
-  next();
+app.use("/admin", adminAuth);
+
+app.get("/admin/getAllData", (req, res) => {
+  res.status(200).send({ message: "All Data sent" });
 });
 
-app.use("/user", (req, res, next) => {
-  console.log("Route handler 1");
-  next();
-});
-
-app.use("/user123", (req, res, next) => {
-  console.log("Route handler 123");
-  res.send({ message: "Hello 123" });
+app.delete("/admin/deleteUser", (req, res) => {
+  res.status(200).send({ message: "User deleted successfully" });
 });
 
 app.listen(3000, () => {
