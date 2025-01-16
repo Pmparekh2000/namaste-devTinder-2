@@ -1,23 +1,16 @@
 const express = require("express");
+const { connectToCluster } = require("../config/database");
 
 const app = express();
+const PORT = 3000;
 
-app.get("/getUserData", (req, res) => {
-  try {
-    throw new Error("Index out of bounds");
-    res.status(200).send({ message: "All Data sent" });
-  } catch (err) {
-    res.status(500).send("Something went wrong 123");
-  }
-});
-
-app.use("/", (err, req, res, next) => {
-  if (err) {
-    // Log our error
-    res.status(500).send("Something went wrong");
-  }
-});
-
-app.listen(3000, () => {
-  console.log("Listening on port 3000....");
-});
+connectToCluster()
+  .then(() => {
+    console.log("Successfully connected to mongoDB cluster");
+    app.listen(PORT, () => {
+      console.log("Listening on port", PORT);
+    });
+  })
+  .catch((err) => {
+    console.log("Connection to mongoDB cluster failed", err);
+  });
