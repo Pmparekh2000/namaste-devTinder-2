@@ -1,16 +1,21 @@
 const express = require("express");
-const { adminAuth } = require("../middleware/auth");
 
 const app = express();
 
-app.use("/admin", adminAuth);
-
-app.get("/admin/getAllData", (req, res) => {
-  res.status(200).send({ message: "All Data sent" });
+app.get("/getUserData", (req, res) => {
+  try {
+    throw new Error("Index out of bounds");
+    res.status(200).send({ message: "All Data sent" });
+  } catch (err) {
+    res.status(500).send("Something went wrong 123");
+  }
 });
 
-app.delete("/admin/deleteUser", (req, res) => {
-  res.status(200).send({ message: "User deleted successfully" });
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    // Log our error
+    res.status(500).send("Something went wrong");
+  }
 });
 
 app.listen(3000, () => {
