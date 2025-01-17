@@ -3,21 +3,25 @@ const { connectToCluster } = require("../config/database");
 const { User } = require("./models/user");
 
 const app = express();
+
+app.use(express.json());
+
 const PORT = 3000;
 
 app.post("/signup", async (req, res) => {
-  const dummyUser = {
-    firstName: "Hiten",
-    lastName: "Parekh",
-    emailId: "hpp.tech@gmail.com",
-    password: "987654321",
-    age: 52,
-    gender: "female",
+  const { firstName, lastName, emailId, password, age, gender } = req.body;
+  const newUser = {
+    firstName,
+    lastName,
+    emailId,
+    password,
+    age,
+    gender,
   };
 
   try {
     // Creating a new instance of the User model.
-    const user = new User(dummyUser);
+    const user = new User(newUser);
     const response = await user.save();
 
     res.status(200).send({
