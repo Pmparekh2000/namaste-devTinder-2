@@ -70,6 +70,25 @@ app.get("/users", async (req, res) => {
   }
 });
 
+app.delete("/user", async (req, res) => {
+  const { userProp, deleteBy } = req.query;
+  try {
+    const deleteResponse = await User.deleteOne({ [deleteBy]: userProp });
+    if (deleteResponse.deletedCount === 0) {
+      throw new Error("No such user found");
+    }
+    res.status(200).send({
+      message: `User ${userProp} deleted successfully`,
+      user: deleteResponse,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Something went wrong while deleting user",
+      error: error.message,
+    });
+  }
+});
+
 connectToCluster()
   .then(() => {
     console.log("Successfully connected to mongoDB cluster");
