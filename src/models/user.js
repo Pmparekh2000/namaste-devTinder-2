@@ -33,7 +33,7 @@ const userSchema = new Schema(
       required: true,
       validate: {
         validator: (password) => {
-          return password.length === 9 && validator.isStrongPassword(password);
+          return validator.isStrongPassword(password);
         },
         message: "Password length must be 9 digits and it must be strong",
       },

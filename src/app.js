@@ -2,6 +2,8 @@ const express = require("express");
 const { connectToCluster } = require("../config/database");
 const { User } = require("./models/user");
 const { ALLOWED_UPDATES } = require("./utils/constants");
+const { validateSignUpData } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -34,6 +36,12 @@ app.post("/signup", async (req, res) => {
   };
 
   try {
+    // Validating user input data
+    validateSignUpData(req);
+    // Encrypt the password
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    newUser.password = encryptedPassword;
+
     // Creating a new instance of the User model.
     const user = new User(newUser);
     const response = await user.save();
