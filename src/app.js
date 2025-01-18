@@ -9,7 +9,17 @@ app.use(express.json());
 const PORT = 3000;
 
 app.post("/signup", async (req, res) => {
-  const { firstName, lastName, emailId, password, age, gender } = req.body;
+  const {
+    firstName,
+    lastName,
+    emailId,
+    password,
+    age,
+    gender,
+    photoUrl,
+    about,
+    skills,
+  } = req.body;
   const newUser = {
     firstName,
     lastName,
@@ -17,6 +27,9 @@ app.post("/signup", async (req, res) => {
     password,
     age,
     gender,
+    photoUrl,
+    about,
+    skills,
   };
 
   try {
@@ -29,7 +42,7 @@ app.post("/signup", async (req, res) => {
     });
   } catch (error) {
     res.status(500).send({
-      message: `Something went wrong while creating user ${dummyUser.firstName}`,
+      message: `Something went wrong while creating user ${firstName}`,
       error: error.message,
     });
   }
@@ -96,7 +109,7 @@ app.patch("/user", async (req, res) => {
     const updateResponse = await User.findOneAndUpdate(
       { [findBy]: userProp },
       updateBody,
-      { returnDocument: "after", lean: true }
+      { returnDocument: "after", lean: true, runValidators: true }
     );
     console.log("updateResponse", updateResponse);
 
