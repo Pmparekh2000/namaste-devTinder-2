@@ -89,6 +89,28 @@ app.delete("/user", async (req, res) => {
   }
 });
 
+app.patch("/user", async (req, res) => {
+  const { userProp, findBy } = req.query;
+  const updateBody = req.body;
+  try {
+    const updateResponse = await User.findOneAndUpdate(
+      { [findBy]: userProp },
+      updateBody,
+      { returnDocument: "after", lean: true }
+    );
+    console.log("updateResponse", updateResponse);
+
+    res.status(200).send({
+      message: `User ${userProp} updated successfully`,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Something went wrong while updating the user",
+      error: error.message,
+    });
+  }
+});
+
 connectToCluster()
   .then(() => {
     console.log("Successfully connected to mongoDB cluster");
