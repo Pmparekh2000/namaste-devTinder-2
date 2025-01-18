@@ -57,6 +57,32 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+app.post("/login", async (req, res) => {
+  const requestBody = req.body;
+  try {
+    // Getting user data from mongoDB collection
+    const user = await User.findOne({ emailId: requestBody.emailId });
+    if (!user) {
+      throw new Error("Incorrect credentials for " + requestBody.emailId);
+    }
+    const userProvidedPassword = requestBody.password;
+    // Check for password validity
+    const result = await bcrypt.compare(userProvidedPassword, user.password);
+    if (!result) {
+      throw new Error("Incorrect credentials for " + requestBody.emailId);
+    }
+
+    res.status(200).send({
+      message: `User ${user.firstName} with email ${user.emailId} logged-in successfully`,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: `Something went wrong while logging-in ${requestBody.emailId}`,
+      error: error.message,
+    });
+  }
+});
+
 app.get("/user", async (req, res) => {
   const { userProp, filterBy } = req.query;
   try {
