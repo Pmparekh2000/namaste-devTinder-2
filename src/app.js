@@ -1,6 +1,7 @@
 const express = require("express");
 const { connectToCluster } = require("../config/database");
 const { User } = require("./models/user");
+const { ALLOWED_UPDATES } = require("./utils/constants");
 
 const app = express();
 
@@ -102,16 +103,32 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
+app.put("/user", async (req, res) => {
   const { userProp, findBy } = req.query;
   const updateBody = req.body;
   try {
+    const updateBodyKeys = Object.keys(updateBody);
+    const allowedUpdates = updateBodyKeys.every((key) =>
+      ALLOWED_UPDATES.includes(key)
+    );
+    if (!allowedUpdates) {
+      const restrictedKeys = updateBodyKeys.filter(
+        (key) => !ALLOWED_UPDATES.includes(key)
+      );
+      throw new Error(
+        "Updating restricted fields " +
+          restrictedKeys.join(", ") +
+          " not allowed"
+      );
+    }
+    if (updateBody?.skills.length > 10) {
+      throw new Error("Skills cannot be more then 10.");
+    }
     const updateResponse = await User.findOneAndUpdate(
       { [findBy]: userProp },
       updateBody,
       { returnDocument: "after", lean: true, runValidators: true }
     );
-    console.log("updateResponse", updateResponse);
 
     res.status(200).send({
       message: `User ${userProp} updated successfully`,
