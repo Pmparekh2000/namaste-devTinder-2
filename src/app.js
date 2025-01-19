@@ -6,6 +6,7 @@ const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("../middleware/auth");
 
 const app = express();
 
@@ -76,7 +77,7 @@ app.post("/login", async (req, res) => {
     }
 
     const jwtToken = jwt.sign({ emailId: requestBody.emailId }, "privateKey", {
-      expiresIn: 5,
+      expiresIn: 30,
     });
 
     res
@@ -93,16 +94,9 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const { jwtToken } = req.cookies;
-    if (!jwtToken) {
-      throw new Error("Token is missing. Please log in again");
-    }
-    // Validating if the cookie is a valid cookie
-    const { emailId } = jwt.verify(jwtToken, "privateKey");
-
-    const user = await User.findOne({ emailId: emailId });
+    const user = await User.findOne({ emailId: "prerak2871@gmail.com" });
 
     if (!user) {
       throw new Error("User does not exist");
@@ -110,107 +104,9 @@ app.get("/profile", async (req, res) => {
 
     res
       .status(200)
-      .send({ message: "User profile sent back successfully", user: user });
+      .send({ message: "User profile obtained successfully", user: user });
   } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      res
-        .status(401)
-        .send({ message: "User session expired. Please log in again" });
-    } else {
-      res.status(401).send({ message: error.message });
-    }
-  }
-});
-
-app.get("/user", async (req, res) => {
-  const { userProp, filterBy } = req.query;
-  try {
-    const user = await User.findOne({ [filterBy]: userProp });
-    if (user === null) {
-      throw new Error("No such user found");
-    }
-    res.status(200).send({
-      message: `User ${user.firstName} obtained successfully`,
-      user: user,
-    });
-  } catch (error) {
-    res.status(500).send({
-      message: "Something went wrong while getting user",
-      error: error.message,
-    });
-  }
-});
-
-app.get("/users", async (req, res) => {
-  try {
-    const allUsers = await User.find({});
-    const filteredUsers = allUsers.map((user) => user.firstName);
-    res.status(200).send({
-      message: "All users obtained successfully",
-      users: filteredUsers,
-    });
-  } catch (error) {
-    res.status(500).send({
-      message: "Something went wrong while getting all users",
-      error: error.message,
-    });
-  }
-});
-
-app.delete("/user", async (req, res) => {
-  const { userProp, deleteBy } = req.query;
-  try {
-    const deleteResponse = await User.deleteOne({ [deleteBy]: userProp });
-    if (deleteResponse.deletedCount === 0) {
-      throw new Error("No such user found");
-    }
-    res.status(200).send({
-      message: `User ${userProp} deleted successfully`,
-      user: deleteResponse,
-    });
-  } catch (error) {
-    res.status(500).send({
-      message: "Something went wrong while deleting user",
-      error: error.message,
-    });
-  }
-});
-
-app.put("/user", async (req, res) => {
-  const { userProp, findBy } = req.query;
-  const updateBody = req.body;
-  try {
-    const updateBodyKeys = Object.keys(updateBody);
-    const allowedUpdates = updateBodyKeys.every((key) =>
-      ALLOWED_UPDATES.includes(key)
-    );
-    if (!allowedUpdates) {
-      const restrictedKeys = updateBodyKeys.filter(
-        (key) => !ALLOWED_UPDATES.includes(key)
-      );
-      throw new Error(
-        "Updating restricted fields " +
-          restrictedKeys.join(", ") +
-          " not allowed"
-      );
-    }
-    if (updateBody?.skills.length > 10) {
-      throw new Error("Skills cannot be more then 10.");
-    }
-    const updateResponse = await User.findOneAndUpdate(
-      { [findBy]: userProp },
-      updateBody,
-      { returnDocument: "after", lean: true, runValidators: true }
-    );
-
-    res.status(200).send({
-      message: `User ${userProp} updated successfully`,
-    });
-  } catch (error) {
-    res.status(500).send({
-      message: "Something went wrong while updating the user",
-      error: error.message,
-    });
+    res.status(500).send({ message: "Somthing went wrong. " + error.message });
   }
 });
 
