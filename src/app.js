@@ -82,7 +82,7 @@ app.post("/login", async (req, res) => {
 
     res
       .status(200)
-      .cookie("jwtToken", jwtToken)
+      .cookie("jwtToken", jwtToken, { expires: new Date(Date.now() + 35000) })
       .send({
         message: `User ${user.firstName} with email ${user.emailId} logged-in successfully`,
       });
@@ -96,17 +96,26 @@ app.post("/login", async (req, res) => {
 
 app.get("/profile", userAuth, async (req, res) => {
   try {
-    const user = await User.findOne({ emailId: "prerak2871@gmail.com" });
-
-    if (!user) {
-      throw new Error("User does not exist");
-    }
-
     res
       .status(200)
-      .send({ message: "User profile obtained successfully", user: user });
+      .send({ message: "User profile obtained successfully", user: req.user });
   } catch (error) {
     res.status(500).send({ message: "Somthing went wrong. " + error.message });
+  }
+});
+
+app.post("/sendConnectionRequest", userAuth, async (req, res) => {
+  try {
+    console.log("Send connection request successfully");
+    res.status(200).send({
+      message:
+        "Connection request sent successfully for user " + req.user.firstName,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Connection request sent successfully",
+      error: error.message,
+    });
   }
 });
 

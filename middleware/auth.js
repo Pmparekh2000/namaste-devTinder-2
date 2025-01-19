@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { User } = require("../src/models/user");
 
 const userAuth = async (req, res, next) => {
   try {
@@ -8,7 +9,12 @@ const userAuth = async (req, res, next) => {
     }
     // Validating if the cookie is a valid cookie
     const { emailId } = jwt.verify(jwtToken, "privateKey");
-    req.emailId = emailId;
+    const user = await User.findOne({ emailId: emailId });
+
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+    req.user = user;
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
