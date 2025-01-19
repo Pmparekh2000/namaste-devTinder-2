@@ -4,10 +4,13 @@ const { User } = require("./models/user");
 const { ALLOWED_UPDATES } = require("./utils/constants");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 const PORT = 3000;
 
@@ -72,14 +75,50 @@ app.post("/login", async (req, res) => {
       throw new Error("Incorrect credentials for " + requestBody.emailId);
     }
 
-    res.status(200).send({
-      message: `User ${user.firstName} with email ${user.emailId} logged-in successfully`,
+    const jwtToken = jwt.sign({ emailId: requestBody.emailId }, "privateKey", {
+      expiresIn: 5,
     });
+
+    res
+      .status(200)
+      .cookie("jwtToken", jwtToken)
+      .send({
+        message: `User ${user.firstName} with email ${user.emailId} logged-in successfully`,
+      });
   } catch (error) {
     res.status(500).send({
       message: `Something went wrong while logging-in ${requestBody.emailId}`,
       error: error.message,
     });
+  }
+});
+
+app.get("/profile", async (req, res) => {
+  try {
+    const { jwtToken } = req.cookies;
+    if (!jwtToken) {
+      throw new Error("Token is missing. Please log in again");
+    }
+    // Validating if the cookie is a valid cookie
+    const { emailId } = jwt.verify(jwtToken, "privateKey");
+
+    const user = await User.findOne({ emailId: emailId });
+
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    res
+      .status(200)
+      .send({ message: "User profile sent back successfully", user: user });
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      res
+        .status(401)
+        .send({ message: "User session expired. Please log in again" });
+    } else {
+      res.status(401).send({ message: error.message });
+    }
   }
 });
 
