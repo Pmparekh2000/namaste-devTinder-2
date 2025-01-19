@@ -69,16 +69,15 @@ app.post("/login", async (req, res) => {
     if (!user) {
       throw new Error("Incorrect credentials for " + requestBody.emailId);
     }
-    const userProvidedPassword = requestBody.password;
+
     // Check for password validity
-    const result = await bcrypt.compare(userProvidedPassword, user.password);
+    const result = await user.validatePassword(requestBody.password);
     if (!result) {
       throw new Error("Incorrect credentials for " + requestBody.emailId);
     }
 
-    const jwtToken = jwt.sign({ emailId: requestBody.emailId }, "privateKey", {
-      expiresIn: 30,
-    });
+    // Generating a brand new JWT token for the current user
+    const jwtToken = user.getJWT();
 
     res
       .status(200)

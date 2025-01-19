@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const { Schema } = mongoose;
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const userSchema = new Schema(
   {
@@ -77,6 +79,23 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
+
+userSchema.methods.getJWT = function () {
+  const user = this;
+  const token = jwt.sign({ emailId: user.emailId }, "privateKey", {
+    expiresIn: 30,
+  });
+  return token;
+};
+
+userSchema.methods.validatePassword = async function (userProvidedPassword) {
+  const user = this;
+  const passwordValidity = await bcrypt.compare(
+    userProvidedPassword,
+    user.password
+  );
+  return passwordValidity;
+};
 
 // Whatever is the name of the collection, make it Singular and make the first letter capital.
 // That is the name of the model.
