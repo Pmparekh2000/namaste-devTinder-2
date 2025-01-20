@@ -3,6 +3,7 @@ const validator = require("validator");
 const { Schema } = mongoose;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { OTHERS, MALE, FEMALE } = require("../utils/constants");
 
 const userSchema = new Schema(
   {
@@ -47,11 +48,9 @@ const userSchema = new Schema(
     },
     gender: {
       type: String,
-      validate: {
-        validator: (genderValue) => {
-          return ["male", "female", "others"].includes(genderValue);
-        },
-        message: "Gender can be either of male, female or others",
+      enum: {
+        values: [MALE, FEMALE, OTHERS],
+        message: "{VALUE} is not valid gender",
       },
     },
     photoUrl: {
