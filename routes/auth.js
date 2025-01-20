@@ -85,4 +85,22 @@ authRouter.post("/login", async (req, res) => {
   }
 });
 
+authRouter.post("/logout", async (req, res) => {
+  try {
+    const { jwtToken } = req.cookies;
+    if (!jwtToken) {
+      res.status(200).send({ message: "User already logged out" });
+    } else {
+      res
+        .status(200)
+        .clearCookie("jwtToken")
+        .send({ message: "User logged out successfully" });
+    }
+  } catch (error) {
+    res.status(400).send({
+      message: "Error occured while trying to logout " + error.message,
+    });
+  }
+});
+
 module.exports = authRouter;

@@ -1,4 +1,4 @@
-const ALLOWED_UPDATES = ["password", "photoUrl", "about", "skills"];
+const ALLOWED_UPDATES = ["photoUrl", "about", "skills"];
 
 module.exports = {
   ALLOWED_UPDATES,

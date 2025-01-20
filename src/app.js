@@ -13,7 +13,7 @@ app.use(cookieParser());
 const PORT = 3000;
 
 app.use("/", authRouter);
-app.use("/", profileRouter);
+app.use("/profile", profileRouter);
 app.use("/", requestRouter);
 
 connectToCluster()
