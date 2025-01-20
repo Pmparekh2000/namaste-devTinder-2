@@ -83,7 +83,7 @@ const userSchema = new Schema(
 userSchema.methods.getJWT = function () {
   const user = this;
   const token = jwt.sign({ emailId: user.emailId }, "privateKey", {
-    expiresIn: 30,
+    expiresIn: 300,
   });
   return token;
 };
