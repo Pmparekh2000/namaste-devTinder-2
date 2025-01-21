@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const authRouter = require("../routes/auth");
 const profileRouter = require("../routes/profile");
 const requestRouter = require("../routes/request");
+const userRouter = require("../routes/user");
 
 const app = express();
 
@@ -15,6 +16,7 @@ const PORT = 3000;
 app.use("/auth", authRouter);
 app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
+app.use("/user", userRouter);
 
 connectToCluster()
   .then(() => {
