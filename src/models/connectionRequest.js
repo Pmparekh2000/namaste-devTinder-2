@@ -5,7 +5,7 @@ const {
   ACCEPTED,
   REJECTED,
 } = require("../utils/constants");
-const { Schema } = mongoose();
+const { Schema } = mongoose;
 
 const connectionRequestSchema = new Schema(
   {
@@ -31,9 +31,24 @@ const connectionRequestSchema = new Schema(
   }
 );
 
-const ConnectionRequestModel = new mongoose.model(
+// Creating a compound index on both fromUserId and toUserId
+connectionRequestSchema.index({ fromUserId: 1, toUserId: 1 });
+
+connectionRequestSchema.pre("save", function (next) {
+  const connectionRequest = this;
+  // Checking if there is no circular connection request
+  if (
+    connectionRequest.fromUserId._id.toString() ===
+    connectionRequest.toUserId._id.toString()
+  ) {
+    throw new Error("From and to User ids cannot be same");
+  }
+  next();
+});
+
+const ConnectionRequest = mongoose.model(
   "ConnectionRequest",
   connectionRequestSchema
 );
 
-module.exports = ConnectionRequestModel;
+module.exports = { ConnectionRequest };

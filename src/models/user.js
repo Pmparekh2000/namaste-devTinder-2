@@ -79,10 +79,12 @@ const userSchema = new Schema(
   }
 );
 
+userSchema.index({ firstName: 1, emailId: 1 });
+
 userSchema.methods.getJWT = function () {
   const user = this;
   const token = jwt.sign({ emailId: user.emailId }, "privateKey", {
-    expiresIn: 300,
+    expiresIn: 3000,
   });
   return token;
 };

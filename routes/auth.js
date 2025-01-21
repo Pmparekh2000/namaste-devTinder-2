@@ -74,7 +74,7 @@ authRouter.post("/login", async (req, res) => {
     res
       .status(200)
       .cookie("jwtToken", jwtToken, {
-        expires: new Date(Date.now() + 35000000),
+        expires: new Date(Date.now() + 35000000000),
       })
       .send({
         message: `User ${user.firstName} with email ${user.emailId} logged-in successfully`,
