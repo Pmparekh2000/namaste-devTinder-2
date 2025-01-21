@@ -4,9 +4,11 @@ const IGNORED = "ignored";
 const ACCEPTED = "accepted";
 const REJECTED = "rejected";
 const ALLOWED_STATUS = [INTERESTED, IGNORED];
+const ALLOWED_ACTIONS = [ACCEPTED, REJECTED];
 const MALE = "male";
 const FEMALE = "female";
 const OTHERS = "others";
+const FULFILLED = "fulfilled";
 
 module.exports = {
   ALLOWED_UPDATES,
@@ -18,4 +20,6 @@ module.exports = {
   MALE,
   FEMALE,
   OTHERS,
+  FULFILLED,
+  ALLOWED_ACTIONS,
 };
