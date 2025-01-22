@@ -52,7 +52,12 @@ userRouter.get("/connections", userAuth, async (req, res) => {
       .populate("toUserId", ["firstName", "lastName", "photoUrl"]);
 
     // Just filtering out data of connections
-    const data = acceptedConnectionRequest.map((row) => row.fromUserId);
+    const data = acceptedConnectionRequest.map((row) => {
+      if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
+        return row.toUserId;
+      }
+      return row.fromUserId;
+    });
 
     res.status(200).send({
       message: "All of your connections are : ",
