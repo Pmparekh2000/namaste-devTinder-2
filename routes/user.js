@@ -75,7 +75,18 @@ userRouter.get("/connections", userAuth, async (req, res) => {
 
 // Get the feed of the current user
 userRouter.get("/feed", userAuth, async (req, res) => {
+  let { page = 1, limit = 10 } = req.query;
+
   try {
+    if (page <= 0) {
+      throw new Error("page value must be greater then 0");
+    }
+    if (limit <= 0) {
+      throw new Error("limit value must be greater then 0");
+    }
+    // Adding this check to prevent unnecessarily high limit value to prevent database from getting overwhelmed
+    limit = limit > 20 ? 20 : limit;
+    const skip = (page - 1) * limit;
     const loggedInUser = req.user;
 
     // Find all connection request either I have sent or received
@@ -96,7 +107,9 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         { _id: { $nin: Array.from(hideUsersFromFeed) } },
         { _id: { $ne: loggedInUser._id } },
       ],
-    });
+    })
+      .skip(skip)
+      .limit(limit);
     res.status(200).send({
       message: "All available users in our db are",
       count: userFeedData.length,
