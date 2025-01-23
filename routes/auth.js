@@ -1,4 +1,5 @@
 const express = require("express");
+const _ = require("lodash");
 const { validateSignUpData } = require("../src/utils/validation");
 const bcrypt = require("bcrypt");
 const { User } = require("../src/models/user");
@@ -71,6 +72,18 @@ authRouter.post("/login", async (req, res) => {
     // Generating a brand new JWT token for the current user
     const jwtToken = user.getJWT();
 
+    // Sending only the relevant data to frontend
+    const returnUserData = _.pick(user, [
+      "firstName",
+      "lastName",
+      "emailId",
+      "age",
+      "gender",
+      "photoUrl",
+      "about",
+      "skills",
+    ]);
+
     res
       .status(200)
       .cookie("jwtToken", jwtToken, {
@@ -78,6 +91,7 @@ authRouter.post("/login", async (req, res) => {
       })
       .send({
         message: `User ${user.firstName} with email ${user.emailId} logged-in successfully`,
+        user: returnUserData,
       });
   } catch (error) {
     res.status(500).send({

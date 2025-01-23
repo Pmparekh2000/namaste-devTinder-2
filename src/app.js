@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const { connectToCluster } = require("../config/database");
 const cookieParser = require("cookie-parser");
 const authRouter = require("../routes/auth");
@@ -8,6 +9,12 @@ const userRouter = require("../routes/user");
 
 const app = express();
 
+const corsConfig = {
+  origin: "http://localhost:5173",
+  credentials: true,
+};
+
+app.use(cors(corsConfig));
 app.use(express.json());
 app.use(cookieParser());
 
