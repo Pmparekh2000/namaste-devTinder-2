@@ -1,4 +1,12 @@
-const ALLOWED_UPDATES = ["photoUrl", "about", "skills"];
+const ALLOWED_UPDATES = [
+  "firstName",
+  "lastName",
+  "age",
+  "gender",
+  "photoUrl",
+  "about",
+  "skills",
+];
 const INTERESTED = "interested";
 const IGNORED = "ignored";
 const ACCEPTED = "accepted";
