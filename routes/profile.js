@@ -65,14 +65,15 @@ profileRouter.patch("/edit", userAuth, async (req, res) => {
           ALLOWED_UPDATES.join(", ")
       );
     }
-    const updateResponse = await User.findOneAndUpdate(
+    const updatedResponse = await User.findOneAndUpdate(
       { emailId: req.user.emailId },
       { ...requestBody },
       { returnDocument: "after" }
-    );
+    ).select("firstName lastName age gender photoUrl skills about");
+
     res.status(200).send({
       message: "User profile updated successfully",
-      updatedUser: updateResponse,
+      updatedUser: updatedResponse,
     });
   } catch (error) {
     res
