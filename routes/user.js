@@ -51,7 +51,15 @@ userRouter.get("/connections", userAuth, async (req, res) => {
         "about",
         "skills",
       ])
-      .populate("toUserId", ["firstName", "lastName", "photoUrl"]);
+      .populate("toUserId", [
+        "firstName",
+        "lastName",
+        "photoUrl",
+        "age",
+        "gender",
+        "skills",
+        "about",
+      ]);
 
     // Just filtering out data of connections
     const data = acceptedConnectionRequest.map((row) => {
