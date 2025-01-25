@@ -48,6 +48,7 @@ userRouter.get("/connections", userAuth, async (req, res) => {
         "age",
         "photoUrl",
         "gender",
+        "about",
         "skills",
       ])
       .populate("toUserId", ["firstName", "lastName", "photoUrl"]);
