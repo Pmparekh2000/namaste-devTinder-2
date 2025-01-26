@@ -7,8 +7,6 @@ const { User } = require("../src/models/user");
 const authRouter = express.Router();
 
 authRouter.post("/signup", async (req, res) => {
-  console.log("Coming inside the sign up API");
-
   const {
     firstName,
     lastName,
@@ -43,9 +41,17 @@ authRouter.post("/signup", async (req, res) => {
     const user = new User(newUser);
     const response = await user.save();
 
-    res.status(200).send({
-      message: `User ${response.firstName} with email ${response.emailId} saved successfully`,
-    });
+    const jwtToken = await response.getJWT();
+
+    res
+      .status(200)
+      .cookie("jwtToken", jwtToken, {
+        expires: new Date(Date.now() + 35000000000),
+      })
+      .send({
+        message: `User ${response.firstName} with email ${response.emailId} saved successfully`,
+        user: user,
+      });
   } catch (error) {
     res.status(500).send({
       message: `Something went wrong while creating user ${firstName}`,
