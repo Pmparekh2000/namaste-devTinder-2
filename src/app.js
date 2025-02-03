@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { connectToCluster } = require("../config/database");
@@ -18,8 +19,7 @@ app.use(cors(corsConfig));
 app.use(express.json());
 app.use(cookieParser());
 
-const PORT = 3000;
-
+// Routes
 app.use("/auth", authRouter);
 app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
@@ -28,8 +28,8 @@ app.use("/user", userRouter);
 connectToCluster()
   .then(() => {
     console.log("Successfully connected to mongoDB cluster");
-    app.listen(PORT, () => {
-      console.log("Listening on port", PORT);
+    app.listen(process.env.PORT, () => {
+      console.log("Listening on port", process.env.PORT);
     });
   })
   .catch((err) => {

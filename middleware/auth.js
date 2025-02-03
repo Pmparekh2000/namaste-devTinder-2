@@ -8,7 +8,7 @@ const userAuth = async (req, res, next) => {
       throw new Error("Token is missing. Please log in again");
     }
     // Validating if the cookie is a valid cookie
-    const { emailId } = jwt.verify(jwtToken, "privateKey");
+    const { emailId } = jwt.verify(jwtToken, process.env.JWT_SECRET_KEY);
     const user = await User.findOne({ emailId: emailId });
 
     if (!user) {

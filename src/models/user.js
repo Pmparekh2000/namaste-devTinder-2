@@ -83,9 +83,13 @@ userSchema.index({ firstName: 1, emailId: 1 });
 
 userSchema.methods.getJWT = function () {
   const user = this;
-  const token = jwt.sign({ emailId: user.emailId }, "privateKey", {
-    expiresIn: 3000,
-  });
+  const token = jwt.sign(
+    { emailId: user.emailId },
+    process.env.JWT_SECRET_KEY,
+    {
+      expiresIn: 3000,
+    }
+  );
   return token;
 };
 
