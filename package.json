@@ -26,6 +26,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^8.9.5",
     "node-cron": "^3.0.3",
+    "razorpay": "^2.9.5",
     "validator": "^13.12.0"
   }
 }

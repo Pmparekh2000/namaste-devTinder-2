@@ -18,6 +18,11 @@ const FEMALE = "female";
 const OTHERS = "others";
 const FULFILLED = "fulfilled";
 
+const MEMBERSHIP_AMOUNT = {
+  silver: 300,
+  gold: 500,
+};
+
 module.exports = {
   ALLOWED_UPDATES,
   INTERESTED,
@@ -30,4 +35,5 @@ module.exports = {
   OTHERS,
   FULFILLED,
   ALLOWED_ACTIONS,
+  MEMBERSHIP_AMOUNT,
 };

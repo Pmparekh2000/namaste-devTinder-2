@@ -52,6 +52,13 @@ const userSchema = new Schema(
         values: [MALE, FEMALE, OTHERS],
         message: "{VALUE} is not valid gender",
       },
+      isPremium: {
+        type: Boolean,
+        default: false,
+      },
+      membershipType: {
+        type: String,
+      },
     },
     photoUrl: {
       type: String,
