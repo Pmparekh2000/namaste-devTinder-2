@@ -49,7 +49,7 @@ paymentRouter.post("/create", userAuth, async (req, res) => {
 // Since razorpay is going to call our webhook API and hence it need not be authenticated
 paymentRouter.post("/webhook", async (req, res) => {
   try {
-    const webhookSignature = req.headers["X-Razorpay-Signature"];
+    const webhookSignature = req.headers("X-Razorpay-Signature");
     const isWebhookValid = validateWebhookSignature(
       JSON.stringify(req.body),
       webhookSignature,
